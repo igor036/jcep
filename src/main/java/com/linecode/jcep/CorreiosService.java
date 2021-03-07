@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBElement;
 
 import com.linecode.jcep.wsdl.ConsultaCEP;
 import com.linecode.jcep.wsdl.ConsultaCEPResponse;
+import com.linecode.jcep.wsdl.EnderecoERP;
 import com.linecode.jcep.wsdl.ObjectFactory;
 
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -28,7 +29,7 @@ public class CorreiosService {
         correiosWebServiceTemplate = buildCorreiosWebServiceTemplate();
     }
     
-    public CompletableFuture<ConsultaCEPResponse> consultarCepAsync(String cep) {
+    public CompletableFuture<EnderecoERP> consultarCepAsync(String cep) {
         
         var thread = Executors.newSingleThreadExecutor();
 
@@ -39,7 +40,7 @@ public class CorreiosService {
         //@formatter:on
     }
 
-    public ConsultaCEPResponse consultarCep(String cep) {
+    public EnderecoERP consultarCep(String cep) {
 
         assertCep(cep);
 
@@ -48,8 +49,12 @@ public class CorreiosService {
 
         var request  = new ObjectFactory().createConsultaCEP(consultaCEP);
         var response = this.<ConsultaCEPResponse>callCorreiosWebServiceAction(request);
-    
-        return response.getValue();
+        
+        //@formatter:off
+        return response
+            .getValue()
+            .getReturn();
+        //@formatter:on
     }
 
     private WebServiceTemplate buildCorreiosWebServiceTemplate () {

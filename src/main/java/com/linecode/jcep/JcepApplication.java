@@ -21,7 +21,7 @@ public class JcepApplication {
 				System.err.println(exception.getMessage());
 			}
 
-			System.out.println(endereco.getReturn().getBairro());
+			System.out.println(endereco.getBairro());
 		});
 	}
 }
