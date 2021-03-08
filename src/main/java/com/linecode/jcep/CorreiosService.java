@@ -11,23 +11,21 @@ import com.linecode.jcep.wsdl.ConsultaCEPResponse;
 import com.linecode.jcep.wsdl.EnderecoERP;
 import com.linecode.jcep.wsdl.ObjectFactory;
 
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+@Service
 public class CorreiosService {
     
     private static final String EMPTY_CEP_VALUE_ERRO_MESSAGE = "O cep informado como null ou empty string.";
+    private static final String INVALID_CEP_VALUE_ERRO_MESSAGE = "Informe um cep válido (8 dígitos numéricos).";
 
-    private static final Pattern VALIDATION_CEP_PATTERN = Pattern.compile("^[0-9]{8}$"); 
-    private static final String CORREIOS_SOURCE_CLASS_PACKAGE = "com.linecode.jcep.wsdl";
-    private static final String CORREIOS_WEB_SERVICE_API_URI = "https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente";
-    
-    private final WebServiceTemplate correiosWebServiceTemplate;
+    private final Pattern validationCepPattern = Pattern.compile("^[0-9]{8}$"); 
 
-    public CorreiosService() {
-        correiosWebServiceTemplate = buildCorreiosWebServiceTemplate();
-    }
+    @Autowired
+    private WebServiceTemplate correiosWebServiceTemplate;
     
     public CompletableFuture<EnderecoERP> consultarCepAsync(String cep) {
         
@@ -57,31 +55,14 @@ public class CorreiosService {
         //@formatter:on
     }
 
-    private WebServiceTemplate buildCorreiosWebServiceTemplate () {
-
-        var correiosWebServiceMarshaller = buildCorreiosWebServiceMarshaller();
-        var webservice = new WebServiceTemplate(correiosWebServiceMarshaller);
-
-        webservice.setDefaultUri(CORREIOS_WEB_SERVICE_API_URI);
-        
-        return webservice;
-    }
-
-    private Jaxb2Marshaller buildCorreiosWebServiceMarshaller() {
-
-        var marshaller = new Jaxb2Marshaller();
-        marshaller.setPackagesToScan(CORREIOS_SOURCE_CLASS_PACKAGE);
-
-        return marshaller;
-    }
-
     private void assertCep(String cep) {
+
         if (!StringUtils.hasText(cep)) {
             throw new IllegalAccessError(EMPTY_CEP_VALUE_ERRO_MESSAGE);
         }
 
-        if (!VALIDATION_CEP_PATTERN.matcher(cep).matches()) {
-            throw new IllegalAccessError(EMPTY_CEP_VALUE_ERRO_MESSAGE);
+        if (!validationCepPattern.matcher(cep).matches()) {
+            throw new IllegalAccessError(INVALID_CEP_VALUE_ERRO_MESSAGE);
         }
     }
 

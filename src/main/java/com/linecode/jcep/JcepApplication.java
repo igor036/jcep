@@ -11,16 +11,12 @@ public class JcepApplication {
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		
-		SpringApplication.run(JcepApplication.class, args);
+		var applicationContext = SpringApplication.run(JcepApplication.class, args);
+		var correiosService    = applicationContext.getBean(CorreiosService.class);
 
-		var correiosService = new CorreiosService();
 
 		correiosService.consultarCepAsync("49035620").whenComplete((endereco, exception) -> {
-
-			if (exception != null) {
-				System.err.println(exception.getMessage());
-			}
-
+			if (exception != null) System.err.println(exception.getMessage());
 			System.out.println(endereco.getBairro());
 		});
 	}
