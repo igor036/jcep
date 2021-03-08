@@ -19,8 +19,8 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 @Service
 public class CorreiosService {
     
-    private static final String EMPTY_CEP_VALUE_ERRO_MESSAGE = "O cep informado como null ou empty string.";
-    private static final String INVALID_CEP_VALUE_ERRO_MESSAGE = "Informe um cep válido (8 dígitos numéricos).";
+    public static final String EMPTY_CEP_VALUE_ERRO_MESSAGE = "O cep informado como null ou empty string.";
+    public static final String INVALID_CEP_VALUE_ERRO_MESSAGE = "Informe um cep válido (8 dígitos numéricos).";
 
     private final Pattern validationCepPattern = Pattern.compile("^[0-9]{8}$"); 
 
@@ -58,11 +58,11 @@ public class CorreiosService {
     private void assertCep(String cep) {
 
         if (!StringUtils.hasText(cep)) {
-            throw new IllegalAccessError(EMPTY_CEP_VALUE_ERRO_MESSAGE);
+            throw new IllegalArgumentException(EMPTY_CEP_VALUE_ERRO_MESSAGE);
         }
 
         if (!validationCepPattern.matcher(cep).matches()) {
-            throw new IllegalAccessError(INVALID_CEP_VALUE_ERRO_MESSAGE);
+            throw new IllegalArgumentException(INVALID_CEP_VALUE_ERRO_MESSAGE);
         }
     }
 
